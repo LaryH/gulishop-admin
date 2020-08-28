@@ -32,17 +32,26 @@
       :page-sizes="pageSize"
       :background="true"
       :pager-count="5"
+      align="center"
       layout=" prev, pager, next, ->, jumper, total, sizes"
       @size-change="handleSizeChange"
       @current-change="getTrademarkList"
     />
 
     <el-dialog :title="form.id ? '修改品牌' : '添加品牌'" :visible.sync="dialogVisible">
-      <el-form :model="form">
-        <el-form-item label="品牌名称" label-width="">
-          <el-input v-model="form.tmName" autocomplete="off" class="el-input" />
+      <el-form ref="form" :model="form" :rules="rules">
+        <el-form-item
+          label="品牌名称"
+          prop="tmName"
+          label-width=""
+        >
+          <el-input
+            v-model="form.tmName"
+            autocomplete="off"
+            class="el-input"
+          />
         </el-form-item>
-        <el-form-item label="品牌图片" label-width="">
+        <el-form-item label="品牌图片" label-width="" prop="logoUrl">
           <el-upload
             class="upload-demo"
             drag
@@ -51,7 +60,7 @@
             :before-upload="beforeAvatarUpload"
           >
             <i class="el-icon-upload" />
-            <div v-if="form.logoUrl === undefined" class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+            <div v-if="form.logoUrl === undefined">将文件拖到此处，或<em>点击上传</em></div>
             <div v-else-if="form.logoUrl"><img :src="form.logoUrl"></div>
             <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
           </el-upload>
@@ -59,7 +68,7 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="trademarkddOrupdate">确 定</el-button>
+        <el-button type="primary" @click="trademarkddOrupdate('form')">确 定</el-button>
       </div>
     </el-dialog>
   </div>
@@ -69,6 +78,17 @@
 export default {
   name: 'Trademark',
   data() {
+    const validatetmName = (rule, value, callback) => {
+      // callback 是验证完成之后的回调函数
+      // 如果传入了错误信息,那么戴白验证失败
+      // 如果没有传入任何的参数,代表验证通过
+      if (!value) {
+        return callback(new Error('品牌名称不能为空'))
+      }
+      if (value.length < 2 || value.length > 20) {
+        callback(new Error('请输入2-20之间的名称'))
+      }
+    }
     return {
       page: 1,
       limit: 3,
@@ -77,7 +97,17 @@ export default {
       trademarkList: [],
 
       dialogVisible: false,
-      form: {}
+      form: {},
+      rules: {
+        tmName: [
+          { required: true, message: '请输入品牌名称', trigger: 'blur' },
+          // { min: 2, max: 20, message: '请输入2-20之间的名称', trigger: 'change' }
+          { validator: validatetmName, trigger: 'change' }
+        ],
+        logoUrl: [
+          { required: true, message: '请上传品牌Logo', trigger: 'cahnge' }
+        ]
+      }
     }
   },
   // computed: {
@@ -139,28 +169,39 @@ export default {
       }
       return isJPGOrPNG && isLt500K // 只有都为true才符合我们的限制需求
     },
-    async trademarkddOrupdate() {
-      const trademark = this.form
-      console.log(this.form)
-      // const { tmName, logoUrl } = this.form
-      // if (tmName && logoUrl) {
-      try {
-        const result = await this.$API.trademark.addOrUpdate(trademark)
-        if (result.code === 200) {
-          // this.$alert("上传成功")
-          // 1.关闭dialog
-          this.dialogVisible = false
-          // 2.重新请求拿列表数据
-          this.getTrademarkList()
-          // 3. 提示成功
-          this.$message.success(`${trademark.id ? '修改 ' : '添加'}成功`)
+    trademarkddOrupdate(form) {
+      this.$refs[form].validate(async(valid) => {
+        if (valid) {
+          // 1.获取参数
+          const trademark = this.form
+          console.log(this.form)
+          // const { tmName, logoUrl } = this.form
+          // if (tmName && logoUrl) {
+          // 2.发请求
+          // 3.成功干嘛,失败干嘛
+          try {
+            const result = await this.$API.trademark.addOrUpdate(trademark)
+            if (result.code === 200) {
+              // this.$alert("上传成功")
+              // 1.关闭dialog
+              this.dialogVisible = false
+              // 2.重新请求拿列表数据
+              this.getTrademarkList()
+              // 3. 提示成功
+              this.$message.success(`${trademark.id ? '修改 ' : '添加'}成功`)
+            } else {
+              this.$alert('上传失败')
+            }
+          } catch (err) {
+            // 发送ajax请求失败
+            this.$message.error(err.message)
+          }
         } else {
-          this.$alert('上传失败')
+          console.log('error submit!!')
+          return false
         }
-      } catch (err) {
-        // 发送ajax请求失败
-        this.$message.error(err.message)
-      }
+      })
+
       // }
     },
     // 删除

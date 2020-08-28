@@ -1,9 +1,12 @@
 <template>
   <el-row :gutter="40" class="panel-group">
-    
+
     <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
-      <div class="card-panel" @click="handleSetLineChartData('purchases')" 
-        :class="{active: currentType==='purchases'}">
+      <div
+        class="card-panel"
+        :class="{active: currentType==='purchases'}"
+        @click="handleSetLineChartData('purchases')"
+      >
         <div class="card-panel-icon-wrapper icon-money">
           <svg-icon icon-class="money" class-name="card-panel-icon" />
         </div>
@@ -16,10 +19,12 @@
       </div>
     </el-col>
 
-
     <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
-      <div class="card-panel" @click="handleSetLineChartData('shoppings')"
-        :class="{active: currentType==='shoppings'}">
+      <div
+        class="card-panel"
+        :class="{active: currentType==='shoppings'}"
+        @click="handleSetLineChartData('shoppings')"
+      >
         <div class="card-panel-icon-wrapper icon-shopping">
           <svg-icon icon-class="shopping" class-name="card-panel-icon" />
         </div>
@@ -32,8 +37,11 @@
       </div>
     </el-col>
     <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
-      <div class="card-panel" @click="handleSetLineChartData('newUsers')"
-        :class="{active: currentType==='newUsers'}">
+      <div
+        class="card-panel"
+        :class="{active: currentType==='newUsers'}"
+        @click="handleSetLineChartData('newUsers')"
+      >
         <div class="card-panel-icon-wrapper icon-people">
           <svg-icon icon-class="peoples" class-name="card-panel-icon" />
         </div>
@@ -46,8 +54,11 @@
       </div>
     </el-col>
     <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
-      <div class="card-panel" @click="handleSetLineChartData('messages')"
-        :class="{active: currentType==='messages'}">
+      <div
+        class="card-panel"
+        :class="{active: currentType==='messages'}"
+        @click="handleSetLineChartData('messages')"
+      >
         <div class="card-panel-icon-wrapper icon-message">
           <svg-icon icon-class="message" class-name="card-panel-icon" />
         </div>
@@ -65,14 +76,14 @@
 <script>
 import CountTo from 'vue-count-to'
 export default {
-  data () {
-    return {
-      currentType: 'purchases'
-    }
-  },
 
   components: {
     CountTo
+  },
+  data() {
+    return {
+      currentType: 'purchases'
+    }
   },
   methods: {
     handleSetLineChartData(type) {
@@ -154,8 +165,6 @@ export default {
         font-size: 48px;
       }
     }
-
-    
 
     .card-panel-description {
       float: right;

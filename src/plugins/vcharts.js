@@ -1,4 +1,4 @@
-/* 
+/*
 引入v-charts, 并对其实现按需引入打包
 */
 import Vue from 'vue'
